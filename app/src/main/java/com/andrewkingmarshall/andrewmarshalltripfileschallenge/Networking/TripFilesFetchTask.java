@@ -15,7 +15,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This Async Task will retrieve all the Trip File Objects located at: http://www.gregframe.com/pubimage/tfDataExample.php
@@ -25,27 +24,27 @@ import java.util.List;
  *
  */
 
-public class TripFilesFetchTask extends AsyncTask<Void, Void, List<TripFile>> {
+public class TripFilesFetchTask extends AsyncTask<Void, Void, TripFile> {
 
     private static final String TAG = TripFilesFetchTask.class.getSimpleName();
 
-    private TripFilesFetchListener fetchListener;
+    private TripFileFetchListener fetchListener;
 
-    public interface TripFilesFetchListener {
-        void mediaRetrieved(List<TripFile> tripFiles);
+    public interface TripFileFetchListener {
+        void tripFileRetrieved(TripFile tripFile);
     }
 
     public TripFilesFetchTask(Context context) {
 
-        if (context instanceof TripFilesFetchListener) {
-            this.fetchListener = (TripFilesFetchListener) context;
+        if (context instanceof TripFileFetchListener) {
+            this.fetchListener = (TripFileFetchListener) context;
         } else {
-            throw new IllegalArgumentException("The Context must implement TripFilesFetchListener.");
+            throw new IllegalArgumentException("The Context must implement TripFileFetchListener.");
         }
     }
 
     @Override
-    protected List<TripFile> doInBackground(Void... voids) {
+    protected TripFile doInBackground(Void... voids) {
 
         String mediaUrl = "http://www.gregframe.com/pubimage/tfDataExample.php";
 
@@ -53,7 +52,7 @@ public class TripFilesFetchTask extends AsyncTask<Void, Void, List<TripFile>> {
         String data;
 
         // The list of media objects we will be returning
-        ArrayList<TripFile> tripFiles = new ArrayList<>();
+        TripFile tripFile = new TripFile();
 
         try {
             URL url = new URL(mediaUrl);
@@ -75,29 +74,33 @@ public class TripFilesFetchTask extends AsyncTask<Void, Void, List<TripFile>> {
 
             data = stringBuilder.toString();
 
+            // Fix in the JSON data
+            data = data.substring(0, data.length() - 3);
+
+
             // Clean up
             inputStream.close();
             conn.disconnect();
 
             // Convert the raw Json into a List of Media Objects
             Gson gson = new Gson();
-            tripFiles = gson.fromJson(data, new TypeToken<List<TripFile>>(){}.getType());
+            tripFile = gson.fromJson(data, new TypeToken<TripFile>(){}.getType());
 
         } catch (IOException e) {
             Log.e(TAG, "IOException: " + e.getLocalizedMessage(), new Throwable());
             e.printStackTrace();
         }
 
-        Log.d(TAG, "Number of Trip Files retrieved: " + tripFiles.size());
+        Log.d(TAG, "Number of Images retrieved: " + tripFile.getImages().size());
 
-        return tripFiles;
+        return tripFile;
     }
 
     @Override
-    protected void onPostExecute(List<TripFile> tripFiles) {
-        super.onPostExecute(tripFiles);
+    protected void onPostExecute(TripFile tripFile) {
+        super.onPostExecute(tripFile);
 
         // Return the Media Objects to the Listener
-        fetchListener.mediaRetrieved(tripFiles);
+        fetchListener.tripFileRetrieved(tripFile);
     }
 }
