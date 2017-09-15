@@ -1,9 +1,10 @@
-package com.andrewkingmarshall.andrewmarshalltripfileschallenge;
+package com.andrewkingmarshall.andrewmarshalltripfileschallenge.Networking;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.andrewkingmarshall.andrewmarshalltripfileschallenge.Objects.TripFile;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -20,7 +21,7 @@ import java.util.List;
  * This Async Task will retrieve all the Trip File Objects located at: http://www.gregframe.com/pubimage/tfDataExample.php
  *
  * Note: Normally I would build out an entire robust network and data layer using Retrofit and Realm,
- * but this work great for the purposes of this exercise.
+ * but this will work great for the purposes of this exercise.
  *
  */
 
@@ -28,31 +29,31 @@ public class TripFilesFetchTask extends AsyncTask<Void, Void, List<TripFile>> {
 
     private static final String TAG = TripFilesFetchTask.class.getSimpleName();
 
-    private MediaFetchListener mediaListener;
+    private TripFilesFetchListener fetchListener;
 
-    public interface MediaFetchListener {
-        void mediaRetrieved(List<TripFile> mediaObjects);
+    public interface TripFilesFetchListener {
+        void mediaRetrieved(List<TripFile> tripFiles);
     }
 
     public TripFilesFetchTask(Context context) {
 
-        if (context instanceof MediaFetchListener) {
-            this.mediaListener = (MediaFetchListener) context;
+        if (context instanceof TripFilesFetchListener) {
+            this.fetchListener = (TripFilesFetchListener) context;
         } else {
-            throw new IllegalArgumentException("The Context must implement MediaFetchListener.");
+            throw new IllegalArgumentException("The Context must implement TripFilesFetchListener.");
         }
     }
 
     @Override
     protected List<TripFile> doInBackground(Void... voids) {
 
-        String mediaUrl = "http://de-coding-test.s3.amazonaws.com/books.json";
+        String mediaUrl = "http://www.gregframe.com/pubimage/tfDataExample.php";
 
         // The raw Json String we will get from the URL
         String data;
 
         // The list of media objects we will be returning
-        ArrayList<TripFile> mediaObjects = new ArrayList<>();
+        ArrayList<TripFile> tripFiles = new ArrayList<>();
 
         try {
             URL url = new URL(mediaUrl);
@@ -80,16 +81,16 @@ public class TripFilesFetchTask extends AsyncTask<Void, Void, List<TripFile>> {
 
             // Convert the raw Json into a List of Media Objects
             Gson gson = new Gson();
-            mediaObjects = gson.fromJson(data, new TypeToken<List<TripFile>>(){}.getType());
+            tripFiles = gson.fromJson(data, new TypeToken<List<TripFile>>(){}.getType());
 
         } catch (IOException e) {
             Log.e(TAG, "IOException: " + e.getLocalizedMessage(), new Throwable());
             e.printStackTrace();
         }
 
-        Log.d(TAG, "Number of Media Objects retrieved: " + mediaObjects.size());
+        Log.d(TAG, "Number of Trip Files retrieved: " + tripFiles.size());
 
-        return mediaObjects;
+        return tripFiles;
     }
 
     @Override
@@ -97,6 +98,6 @@ public class TripFilesFetchTask extends AsyncTask<Void, Void, List<TripFile>> {
         super.onPostExecute(tripFiles);
 
         // Return the Media Objects to the Listener
-        mediaListener.mediaRetrieved(tripFiles);
+        fetchListener.mediaRetrieved(tripFiles);
     }
 }
