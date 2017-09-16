@@ -39,8 +39,6 @@ public class TripImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public TripImageAdapter(@NonNull Context context, @NonNull List<Image> imageList, @NonNull TripImageAdapterActionListener actionListener) {
 
-        imageList.get(2).setTimestamp(1505526802155L);
-
         // Sort the Images by timestamp
         Collections.sort(imageList);
 

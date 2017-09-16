@@ -2,13 +2,10 @@ package com.andrewkingmarshall.andrewmarshalltripfileschallenge.Views;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,8 +28,6 @@ import butterknife.ButterKnife;
  * Designed with use in a RecyclerView in mind. Should reset it's view when set.
  */
 public class TripImageView extends LinearLayout {
-
-    private int screenWidth;
 
     @BindView(R.id.dateHeader) View dateHeader;
     @BindView(R.id.dayTextView) TextView dayTextView;

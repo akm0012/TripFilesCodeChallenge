@@ -21,12 +21,17 @@ public class MainActivity extends AppCompatActivity implements TripFilesFetchTas
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Pull down all the JSON data
         new TripFilesFetchTask(MainActivity.this).execute();
 
         // Set up the RecyclerView
         tripFileImageRecyclerView = (RecyclerView) findViewById(R.id.tripFileImageRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         tripFileImageRecyclerView.setLayoutManager(layoutManager);
+
+        // Set up the Toolbar
+        setTitle(getString(R.string.title));
+
     }
 
     @Override

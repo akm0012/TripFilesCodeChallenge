@@ -7,6 +7,8 @@
     <!-- The Base URL where the photos are located. -->
     <string name="photoBaseURL" translatable="false">https://qa-tripfiles-s3.imgix.net</string>
 
+    <string name="title">Mindfulness Test of Long Title</string>
+
     <plurals name="comments">
         <item quantity="one">%s Comment</item>
         <item quantity="other">%s Comments</item>
