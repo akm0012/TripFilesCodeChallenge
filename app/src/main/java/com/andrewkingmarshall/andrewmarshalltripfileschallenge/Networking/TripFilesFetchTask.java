@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.andrewkingmarshall.andrewmarshalltripfileschallenge.Objects.TripFile;
+import com.andrewkingmarshall.andrewmarshalltripfileschallenge.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -14,7 +15,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 /**
  * This Async Task will retrieve all the Trip File Objects located at: http://www.gregframe.com/pubimage/tfDataExample.php
@@ -30,6 +30,8 @@ public class TripFilesFetchTask extends AsyncTask<Void, Void, TripFile> {
 
     private TripFileFetchListener fetchListener;
 
+    private String dataURL;
+
     public interface TripFileFetchListener {
         void tripFileRetrieved(TripFile tripFile);
     }
@@ -41,12 +43,12 @@ public class TripFilesFetchTask extends AsyncTask<Void, Void, TripFile> {
         } else {
             throw new IllegalArgumentException("The Context must implement TripFileFetchListener.");
         }
+
+        dataURL = context.getString(R.string.dataEndpointUrl);
     }
 
     @Override
     protected TripFile doInBackground(Void... voids) {
-
-        String mediaUrl = "http://www.gregframe.com/pubimage/tfDataExample.php";
 
         // The raw Json String we will get from the URL
         String data;
@@ -55,7 +57,7 @@ public class TripFilesFetchTask extends AsyncTask<Void, Void, TripFile> {
         TripFile tripFile = new TripFile();
 
         try {
-            URL url = new URL(mediaUrl);
+            URL url = new URL(dataURL);
 
             // Connect to the URL where all our data is located
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();

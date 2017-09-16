@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">AndrewMarshallTripFilesChallenge</string>
+
+    <!-- The URL that contains the JSON needed to produce the Trip File. -->
+    <string name="dataEndpointUrl" translatable="false">http://www.gregframe.com/pubimage/tfDataExample.php</string>
+
+    <!-- The Base URL where the photos are located. -->
+    <string name="photoBaseURL" translatable="false">https://qa-tripfiles-s3.imgix.net</string>
+
+    <plurals name="comments">
+        <item quantity="one">%s Comment</item>
+        <item quantity="other">%s Comments</item>
+    </plurals>
+
+    <plurals name="likes">
+        <item quantity="one">%s Like</item>
+        <item quantity="other">%s Likes</item>
+    </plurals>
+
 </resources>
