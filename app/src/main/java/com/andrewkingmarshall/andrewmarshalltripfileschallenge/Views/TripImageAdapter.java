@@ -11,7 +11,10 @@ import android.view.WindowManager;
 
 import com.andrewkingmarshall.andrewmarshalltripfileschallenge.Objects.Image;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,8 +37,14 @@ public class TripImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private int screenWidth;
 
-    public TripImageAdapter(@NonNull Context context, @NonNull List<Image> mediaObjects, @NonNull TripImageAdapterActionListener actionListener) {
-        this.imageObjects = new ArrayList<>(mediaObjects);
+    public TripImageAdapter(@NonNull Context context, @NonNull List<Image> imageList, @NonNull TripImageAdapterActionListener actionListener) {
+
+        imageList.get(2).setTimestamp(1505526802155L);
+
+        // Sort the Images by timestamp
+        Collections.sort(imageList);
+
+        this.imageObjects = new ArrayList<>(imageList);
         this.actionListener = actionListener;
         this.screenWidth = determineWidthOfScreen(context);
     }
@@ -53,10 +62,14 @@ public class TripImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         TripImageItemViewHolder tripImageItemViewHolder = (TripImageItemViewHolder) holder;
         TripImageView tripImageView = tripImageItemViewHolder.tripImageView;
 
-        Image tripImage = imageObjects.get(holder.getAdapterPosition());
+        int adapterPosition = holder.getAdapterPosition();
+
+        Image tripImage = imageObjects.get(adapterPosition);
+
+        boolean showHeader = shouldHeaderBeDisplayed(adapterPosition, tripImage);
 
         // Set the View with using the stored list of Media Objects
-        tripImageView.setTripFileImage(tripImage, false, screenWidth, new TripImageView.TripImageViewActionListener() {
+        tripImageView.setTripFileImage(tripImage, showHeader, screenWidth, new TripImageView.TripImageViewActionListener() {
             @Override
             public void onHeartClicked(Image image) {
                 actionListener.onHeartClicked(image);
@@ -72,6 +85,40 @@ public class TripImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 actionListener.onOverflowButtonClicked(image);
             }
         });
+    }
+
+    /**
+     * Holds the logic to determine if the Header should be displayed.
+     *
+     * @param adapterPosition The position of the Image.
+     * @param tripImage The Trip Image Object.
+     * @return Flag to indicate if we should show the Date Header or not.
+     */
+    private boolean shouldHeaderBeDisplayed(int adapterPosition, Image tripImage) {
+
+        boolean showHeader = false;
+
+        // Always show the header if this is the first element.
+        if (adapterPosition == 0) {
+            showHeader = true;
+        } else {
+
+            // Otherwise, we show the Date Header if the current Image is newer (by a day) than the previous image.
+
+            DateTime previousImageTime = new DateTime(imageObjects.get(adapterPosition - 1).getTimestamp());
+            DateTime thisImageTime = new DateTime(tripImage.getTimestamp());
+
+            // First check if the years are different
+            if (thisImageTime.getYear() > previousImageTime.getYear()) {
+                showHeader = true;
+            } else {
+                // Then check the day in that year
+                if (thisImageTime.getDayOfYear() > previousImageTime.getDayOfYear()) {
+                    showHeader = true;
+                }
+            }
+        }
+        return showHeader;
     }
 
     /**

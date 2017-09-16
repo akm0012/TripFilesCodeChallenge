@@ -3,11 +3,12 @@ package com.andrewkingmarshall.andrewmarshalltripfileschallenge.Objects;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 /**
  * A Trip File Image object.
  */
-public class Image implements Serializable {
+public class Image implements Serializable, Comparable<Image>{
 
     @SerializedName("TripCrewItemInfo")
     private TripCrewItemInfo tripCrewItemInfo;
@@ -172,6 +173,11 @@ public class Image implements Serializable {
 
     public void setBatchId(String batchId) {
         this.batchId = batchId;
+    }
+
+    // Overriding the compareTo method
+    public int compareTo(Image image) {
+        return Long.compare(this.timestamp, image.timestamp);
     }
 }
 
