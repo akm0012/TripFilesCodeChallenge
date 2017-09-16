@@ -2,10 +2,13 @@ package com.andrewkingmarshall.andrewmarshalltripfileschallenge.Views;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -13,6 +16,8 @@ import android.widget.TextView;
 import com.andrewkingmarshall.andrewmarshalltripfileschallenge.Objects.Image;
 import com.andrewkingmarshall.andrewmarshalltripfileschallenge.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.Target;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -26,6 +31,8 @@ import butterknife.ButterKnife;
  * Designed with use in a RecyclerView in mind. Should reset it's view when set.
  */
 public class TripImageView extends LinearLayout {
+
+    private int screenWidth;
 
     @BindView(R.id.dateHeader) View dateHeader;
     @BindView(R.id.dayTextView) TextView dayTextView;
@@ -90,20 +97,19 @@ public class TripImageView extends LinearLayout {
      *
      * @param image The Trip File Image we want to set.
      */
-    public void setTripFileImage(@NonNull final Image image, boolean showDateHeader,
+    public void setTripFileImage(@NonNull final Image image, boolean showDateHeader, int screenWidth,
                                  @NonNull final TripImageViewActionListener actionListener) {
 
         resetView();
 
         // Create the image url and load the Image
-        String photoUrl = getContext().getString(R.string.photoBaseURL) + image.getImageTemplate();
-        loadImage(photoUrl);
+        loadImage(image, screenWidth);
 
         // Check if we should show the Date Header
         if (showDateHeader) {
 
             // Format the Day (Should be all Caps and abbreviated. I.E. "WED")
-            DateTimeFormatter dayFormatter = DateTimeFormat.forPattern("ddd");
+            DateTimeFormatter dayFormatter = DateTimeFormat.forPattern("E");
             String day = dayFormatter.print(image.getTimestamp()).toUpperCase();
 
             // Format the Month (Should be "July 17, 1990")
@@ -139,15 +145,22 @@ public class TripImageView extends LinearLayout {
     /**
      * Loads an image into the ImageView.
      *
-     * @param imageUrl The URL to the image you want to load.
+     * @param image The image you want to load.
+     * @param screenWidth The width of the screen.
      */
-    private void loadImage(String imageUrl) {
+    private void loadImage(Image image, int screenWidth) {
+
+        String photoUrl = getContext().getString(R.string.photoBaseURL) + image.getImageTemplate();
+
         // Load the Image with a place holder image (Added some edge case crash prevention)
         if (!((Activity) getContext()).isFinishing() && !((Activity) getContext()).isDestroyed()) {
             Glide.with(getContext())
-                    .load(imageUrl)
-                    .error(R.drawable.ic_photo_placeholder_24dp)
-                    .placeholder(R.drawable.ic_photo_placeholder_24dp)
+                    .load(photoUrl)
+                    .override(screenWidth, Target.SIZE_ORIGINAL)
+                    .fitCenter()
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .error(R.color.grey)
+                    .placeholder(R.color.grey)
                     .into(mainTripImageView);
         }
     }

@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:background="@color/lightBlue"
         android:orientation="vertical"
-        tools:visibility="visible"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <View
             android:layout_width="match_parent"
@@ -51,12 +51,11 @@
 
         </LinearLayout>
 
-    </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:background="@color/lightBlue" />
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/mediaImageView"
@@ -65,6 +64,7 @@
         android:scaleType="fitCenter" />
 
     <LinearLayout
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -93,6 +93,7 @@
         android:background="@color/grey" />
 
     <LinearLayout
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -136,11 +137,7 @@
     </LinearLayout>
 
     <View
-        android:id="@+id/lastBlueSpacer"
         android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:background="@color/lightBlue"
-        android:visibility="gone"
-        tools:visibility="visible" />
+        android:layout_height="10dp" />
 
 </LinearLayout>
